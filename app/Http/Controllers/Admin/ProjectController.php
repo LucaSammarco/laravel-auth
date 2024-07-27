@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
-
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 class ProjectController extends Controller
 {
     /**
@@ -26,6 +27,7 @@ class ProjectController extends Controller
     public function create()
     {
         //
+        return view('admin.projects.create');
     }
 
     /**
@@ -34,15 +36,26 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         //
+        // dd($request->all());
+
+        $data =$request->all();
+        $data["author"] = Auth::user()->name;
+        $data["updated_on"] = Carbon::now();
+
+        $newProject = Project::create($data);
+
+        return redirect()->route('admin.projects.show', $newProject);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Project $project)
     {
-        //
+        return view('admin.projects.show', compact('project'));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
